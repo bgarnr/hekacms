@@ -49,9 +49,9 @@ router.post('/register', async (req, res, next) => {
     return res.json({ user: req.user });
   }
 
-  try {
-    const { email, password, role } = req.body;
+  const { email, password, role } = req.body;
 
+  try {
     console.log(`Registration attempt for email: ${email} with role: ${role}`);
 
     if (!email || !password) {

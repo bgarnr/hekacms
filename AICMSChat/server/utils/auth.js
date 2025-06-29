@@ -6,7 +6,8 @@ const generateAccessToken = (user) => {
     email: user.email,
     role: user.role
   };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+  const secret = process.env.JWT_SECRET || 'DEV_JWT_SECRET_REPLACE_ME';
+  return jwt.sign(payload, secret, { expiresIn: '15m' });
 };
 
 const generateRefreshToken = (user) => {
@@ -15,7 +16,8 @@ const generateRefreshToken = (user) => {
     email: user.email,
     role: user.role
   };
-  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
+  const secret = process.env.REFRESH_TOKEN_SECRET || 'DEV_REFRESH_SECRET_REPLACE_ME';
+  return jwt.sign(payload, secret, { expiresIn: '7d' });
 };
 
 module.exports = {

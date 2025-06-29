@@ -6,11 +6,12 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const basicRoutes = require("./routes/index");
 const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const { connectDB } = require("./config/database");
 const cors = require("cors");
 
-if (!process.env.DATABASE_URL) {
-  console.error("Error: DATABASE_URL variables in .env missing.");
+if (!process.env.MONGO_URI) {
+  console.error("Error: MONGO_URI variable in .env missing.");
   process.exit(-1);
 }
 
@@ -37,6 +38,7 @@ app.on("error", (error) => {
 app.use(basicRoutes);
 // Authentication Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {
