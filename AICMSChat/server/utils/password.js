@@ -1,44 +1,45 @@
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
+
+// Argon2 parameters (best-practice for web auth)
+const ARGON_OPTS = {
+  type: argon2.argon2id,
+  timeCost: 3,           // iterations
+  memoryCost: 2 ** 16,   // 64 MB
+  parallelism: 1,
+};
 
 /**
- * Hashes the password using bcrypt algorithm
- * @param {string} password - The password to hash
- * @return {string} Password hash
+ * Hashes the password using Argon2id.
+ * @param {string} password Plain-text password
+ * @returns {Promise<string>} Argon2 hash
  */
 const generatePasswordHash = async (password) => {
-  const salt = await bcrypt.genSalt();
-  const hash = await bcrypt.hash(password, salt);
-  return hash;
+  return argon2.hash(password, ARGON_OPTS);
 };
 
 /**
- * Validates the password against the hash
- * @param {string} password - The password to verify
- * @param {string} hash - Password hash to verify against
- * @return {boolean} True if the password matches the hash, false otherwise
+ * Validates password against an Argon2 hash.
+ * @param {string} password Plain-text password
+ * @param {string} hash Stored hash
+ * @returns {Promise<boolean>} Match result
  */
 const validatePassword = async (password, hash) => {
-  const result = await bcrypt.compare(password, hash);
-  return result;
-};
-
-/**
- * Checks that the hash has a valid format
- * @param {string} hash - Hash to check format for
- * @return {boolean} True if passed string seems like valid hash, false otherwise
- */
-const isPasswordHash = (hash) => {
-  if (!hash || hash.length !== 60) return false;
   try {
-    bcrypt.getRounds(hash);
-    return true;
+    return await argon2.verify(hash, password);
   } catch {
     return false;
   }
+};
+
+/**
+ * Simple check that supplied string resembles an Argon2 hash.
+ */
+const isPasswordHash = (hash) => {
+  return typeof hash === 'string' && hash.startsWith('$argon2');
 };
 
 module.exports = {
   generatePasswordHash,
   validatePassword,
   isPasswordHash,
-}
+};

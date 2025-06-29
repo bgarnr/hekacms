@@ -9,8 +9,8 @@ const authRoutes = require("./routes/authRoutes");
 const { connectDB } = require("./config/database");
 const cors = require("cors");
 
-if (!process.env.DATABASE_URL) {
-  console.error("Error: DATABASE_URL variables in .env missing.");
+if (!process.env.MONGO_URI) {
+  console.error("Error: MONGO_URI variable in .env missing.");
   process.exit(-1);
 }
 
